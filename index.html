@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MMM Swag Design Elims</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Single-column stepper: 3 pages, one card each; page 2 is the design × quantity grid */
+  :root {
+    --bg: #f3f2f6;
+    --card: #ffffff;
+    --ink: #1c1a24;
+    --mute: #6d6878;
+    --line: #dcd8e4;
+    --accent: #4e2a84;
+    --accent-soft: #ece6f5;
+    --error: #b42318;
+    --font-body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15131b; --card: #1f1c27; --ink: #ece9f2; --mute: #a29cb0; --line: #3a3546;
+      --accent: #b9a1e0; --accent-soft: #2e2740; --error: #f97066; color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 var(--font-body);
+  }
+  .wrap {
+    max-width: 820px; margin: 0 auto;
+    padding-block: 32px 80px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .eyebrow {
+    font: 500 12px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .progress { display: flex; gap: 6px; margin-bottom: 18px; }
+  .progress span { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+  .progress span.on { background: var(--accent); }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 24px; display: flex; flex-direction: column; gap: 20px;
+  }
+  h1 { font-size: clamp(24px, 5vw, 32px); font-weight: 800; line-height: 1.15; margin: 0; text-wrap: balance; }
+  .intro p { margin: 0 0 12px; max-width: 65ch; }
+  .intro p:last-child { margin-bottom: 0; }
+  .deadline {
+    display: inline-block; font: 500 14px/1.4 var(--font-mono);
+    background: var(--accent-soft); color: var(--ink); padding: 6px 10px; border-radius: 6px;
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field > label, .field > .label { font-weight: 600; }
+  .req { color: var(--accent); }
+  input[type=text], input[type=email], select, textarea {
+    font: inherit; color: var(--ink); background: var(--card);
+    border: 1.5px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%;
+  }
+  textarea { min-height: 110px; resize: vertical; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, .pill input:focus-visible + span {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .err { color: var(--error); font-size: 14px; }
+  .invalid input[type=text], .invalid input[type=email], .invalid select { border-color: var(--error); }
+  .note { color: var(--mute); font-size: 14px; margin: 0; }
+
+  /* design grid */
+  .grid { display: flex; flex-direction: column; }
+  .grid-head, .row {
+    display: grid; grid-template-columns: minmax(0, 1fr) repeat(5, 52px);
+    gap: 8px; align-items: center;
+  }
+  .grid-head {
+    font: 500 13px/1 var(--font-mono); color: var(--mute); text-align: center;
+    padding: 0 0 10px; border-bottom: 1px solid var(--line);
+  }
+  .grid-head span:first-child { text-align: left; }
+  .grid-head .qhead { grid-column: 2 / -1; }
+  .row { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .row.invalid { background: color-mix(in srgb, var(--error) 7%, transparent); }
+  .design { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .design button {
+    padding: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+    background: #fff; cursor: zoom-in; display: block; width: 100%; max-width: 360px;
+  }
+  .design img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; background: #fff; }
+  .design .name { font-weight: 600; }
+  .design .meta { font: 400 13px/1.3 var(--font-mono); color: var(--mute); }
+  .pill { position: relative; display: flex; justify-content: center; cursor: pointer; }
+  .pill input { position: absolute; opacity: 0; pointer-events: none; }
+  .pill span {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--line);
+    font: 500 14px/1 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--mute);
+    transition: background .12s, color .12s, border-color .12s;
+  }
+  .pill:hover span { border-color: var(--accent); }
+  .pill input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--card); }
+  .row .err { grid-column: 1 / -1; }
+
+  @media (max-width: 600px) {
+    .card { padding: 18px; }
+    .grid-head { display: none; }
+    .row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .design { grid-column: 1 / -1; }
+    .design button { max-width: none; }
+  }
+
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { position: relative; cursor: pointer; }
+  .chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .chip span {
+    display: inline-block; min-width: 56px; text-align: center; padding: 9px 14px;
+    border: 1.5px solid var(--line); border-radius: 999px; font: 500 14px/1 var(--font-mono);
+  }
+  .chip input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--card); }
+  .chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; }
+  button.btn {
+    font: 600 16px/1 var(--font-body); padding: 13px 22px; border-radius: 8px; cursor: pointer;
+    border: 1.5px solid var(--accent); background: var(--accent); color: var(--card);
+  }
+  button.btn.ghost { background: transparent; color: var(--accent); }
+  button.btn:disabled { opacity: .6; cursor: progress; }
+  .hp { position: absolute; left: -9999px; }
+
+  .lightbox {
+    position: fixed; inset: 0; z-index: 20; background: rgba(10, 8, 16, .88);
+    display: flex; align-items: center; justify-content: center; padding: 16px; cursor: zoom-out;
+  }
+  .lightbox img { max-width: 100%; max-height: 100%; border-radius: 6px; background: #fff; }
+  .done h1 { margin-bottom: 8px; }
+  .banner {
+    font-size: 14px; background: #fff4d6; color: #5c3d00; border: 1px solid #f0c75e;
+    border-radius: 8px; padding: 10px 12px; margin-bottom: 16px;
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="demo-banner" class="banner" hidden>Preview mode: the Google Sheet link isn't set up yet, so submissions won't be saved.</div>
+  <div class="progress" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <form id="form" novalidate>
+    <input class="hp" type="text" name="website" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <!-- Page 1 -->
+    <section class="page" data-page="1">
+      <div class="card">
+        <h1>MMM Swag Design Elims</h1>
+        <div class="intro">
+          <p>Hi friends! This is the first of two forms for unsubsidized (pay out of pocket) merch. This form will feel out interest levels and ballpark order volume for each item to see if we hit minimums. After we narrow down designs from the 8 listed to approximately 2–4, we will send a second form for final orders.</p>
+          <p>You can select as many designs as you want, but please only select designs you would purchase. Choose 0 for any you wouldn't buy.</p>
+          <p>We want to share the MMM love with everyone so ofc family, friends, and partners are all welcome to order!</p>
+          <p><span class="deadline" id="deadline"></span></p>
+        </div>
+        <div class="field" data-field="name">
+          <label for="name">Name (first and last) <span class="req">*</span></label>
+          <input type="text" id="name" name="name" autocomplete="name">
+        </div>
+        <div class="field" data-field="email">
+          <label for="email">Email (Kellogg email if you're a student) <span class="req">*</span></label>
+          <input type="email" id="email" name="email" autocomplete="email">
+        </div>
+        <div class="field" data-field="cohort">
+          <label for="cohort">Cohort <span class="req">*</span></label>
+          <select id="cohort" name="cohort">
+            <option value="">Choose one</option>
+            <option>Class of 2027</option>
+            <option>Class of 2028</option>
+            <option>Family / friend / partner</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Page 2 -->
+    <section class="page" data-page="2" hidden>
+      <div class="eyebrow">The designs</div>
+      <div class="card">
+        <h1>...the big reveal!</h1>
+        <p class="note" style="color:var(--ink)">Pick how many of each you'd buy. Prices are estimates and may shift based on total order quantity. Designs may also be tweaked slightly before final orders.</p>
+        <p class="note">Tap an image to see it full size.</p>
+        <div class="grid" role="group" aria-label="Quantity for each design">
+          <div class="grid-head" aria-hidden="true"><span>Design</span><span class="qhead">Quantity You Would Order</span></div>
+          <div id="rows"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Page 3 -->
+    <section class="page" data-page="3" hidden>
+      <div class="eyebrow">Last bits</div>
+      <div class="card">
+        <div class="field" data-field="size">
+          <span class="label" id="size-label">Usual size <span class="req">*</span></span>
+          <span class="note">Select all that apply.</span>
+          <div class="opts" role="group" aria-labelledby="size-label" id="sizes"></div>
+        </div>
+        <div class="field">
+          <label for="ideas">Not for this round, but what would you like to see in the spring? In general?</label>
+          <textarea id="ideas" name="ideas" placeholder="Optional"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Done -->
+    <section class="page done" data-page="done" hidden>
+      <div class="card">
+        <h1>Thanks!</h1>
+        <p class="note" style="color:var(--ink)">We'll send out the final order form once we've picked the designs.</p>
+      </div>
+    </section>
+
+    <div class="nav" id="nav">
+      <button type="button" class="btn ghost" id="back">Back</button>
+      <button type="button" class="btn" id="next">Next</button>
+    </div>
+    <p class="err" id="submit-err" hidden></p>
+  </form>
+</div>
+
+<script>
+  /* ====== EDIT THESE ====== */
+  // Paste the Google Apps Script web app URL here (ends in /exec). See SETUP.md.
+  const SHEET_URL = "";
+  const DEADLINE = "Deadline: _____";
+  // Estimated price per design, shown as "D1 – Windbreaker (~$25)". Leave "" to hide. MOCK VALUES: replace with real estimates.
+  const DESIGNS = [
+    { id: "D1", name: "Windbreaker",     img: "images/D1-Windbreaker.jpg",     price: "~$25" },
+    { id: "D2", name: "Retro Crewneck",  img: "images/D2-Retro-Crewneck.jpg",  price: "~$30" },
+    { id: "D3", name: "Mockneck",        img: "images/D3-Mockneck.jpg",        price: "~$35" },
+    { id: "D4", name: "Wavy M Hat",      img: "images/D4-Wavy-M-Hat.jpg",      price: "~$20" },
+    { id: "D5", name: "Wavy M Crewneck", img: "images/D5-Wavy-M-Crewneck.jpg", price: "~$30" },
+    { id: "D6", name: "Quarterzip",      img: "images/D6-Quarterzip.jpg",      price: "~$35" },
+    { id: "D7", name: "Fuzzy Fleece",    img: "images/D7-Fuzzy-Fleece.jpg",    price: "~$40" },
+    { id: "D8", name: "Beanie",          img: "images/D8-Beanie.jpg",          price: "~$15" },
+  ];
+  const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+  /* ======================== */
+
+  const QTYS = [["0", "0"], ["1", "1"], ["2", "2"], ["3", "3"], ["4", "4+"]];
+  const $ = (s, el = document) => el.querySelector(s);
+  const form = $("#form");
+  let page = 1;
+
+  $("#deadline").textContent = DEADLINE;
+  $("#demo-banner").hidden = !!SHEET_URL;
+
+  // build design rows
+  const rows = $("#rows");
+  DESIGNS.forEach(d => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.dataset.field = d.id;
+    const label = `${d.id} – ${d.name}${d.price ? ` (${d.price})` : ""}`;
+    row.innerHTML = `
+      <div class="design">
+        <span class="name">${label}</span>
+        <button type="button" aria-label="See ${label} full size"><img src="${d.img}" alt="${label}" loading="lazy"></button>
+      </div>
+      ${QTYS.map(([v, t]) => `
+        <label class="pill"><input type="radio" name="${d.id}" id="${d.id}-${v}" value="${v}" aria-label="${label}: ${t}"><span>${t}</span></label>
+      `).join("")}`;
+    rows.appendChild(row);
+  });
+
+  // sizes
+  $("#sizes").innerHTML = SIZES.map(s =>
+    `<label class="chip"><input type="checkbox" name="size" id="size-${s}" value="${s}"><span>${s}</span></label>`
+  ).join("");
+
+  // lightbox
+  rows.addEventListener("click", e => {
+    const btn = e.target.closest(".design button");
+    if (!btn) return;
+    const box = document.createElement("div");
+    box.className = "lightbox";
+    box.innerHTML = `<img src="${btn.querySelector("img").src}" alt="">`;
+    const close = () => { box.remove(); document.removeEventListener("keydown", onKey); btn.focus(); };
+    const onKey = e => { if (e.key === "Escape") close(); };
+    box.addEventListener("click", close);
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(box);
+  });
+
+  // validation
+  function setError(el, msg) {
+    el.classList.toggle("invalid", !!msg);
+    let err = el.querySelector(":scope > .err");
+    if (msg) {
+      if (!err) { err = document.createElement("span"); err.className = "err"; el.appendChild(err); }
+      err.textContent = msg;
+    } else if (err) err.remove();
+  }
+  function validate(p) {
+    const bad = [];
+    const check = (key, ok, msg) => {
+      const el = form.querySelector(`[data-field="${key}"]`);
+      setError(el, ok ? "" : msg);
+      if (!ok) bad.push(el);
+    };
+    if (p === 1) {
+      check("name", $("#name").value.trim().split(/\s+/).length >= 2, "Enter your first and last name.");
+      check("email", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("#email").value.trim()), "Enter a valid email address.");
+      check("cohort", !!$("#cohort").value, "Choose your cohort.");
+    } else if (p === 2) {
+      DESIGNS.forEach(d => check(d.id, !!form.querySelector(`input[name="${d.id}"]:checked`), "Pick a quantity (choose 0 if you wouldn't buy it)."));
+    } else if (p === 3) {
+      check("size", !!form.querySelector('input[name="size"]:checked'), "Choose at least one size.");
+    }
+    const summary = $("#submit-err");
+    if (p === 2 && bad.length) {
+      summary.textContent = `${bad.length} design${bad.length > 1 ? "s" : ""} still need${bad.length > 1 ? "" : "s"} a quantity. Choose 0 for any you wouldn't buy.`;
+      summary.hidden = false;
+    } else summary.hidden = true;
+    if (bad.length) bad[0].scrollIntoView({ behavior: "smooth", block: "center" });
+    return !bad.length;
+  }
+  form.addEventListener("change", e => {
+    const el = e.target.closest("[data-field]");
+    if (el && el.classList.contains("invalid")) setError(el, "");
+    if (!form.querySelector(".row.invalid")) $("#submit-err").hidden = true;
+  });
+
+  function show(p) {
+    page = p;
+    document.querySelectorAll(".page").forEach(s => s.hidden = s.dataset.page !== String(p));
+    document.querySelectorAll(".progress span").forEach((s, i) => s.classList.toggle("on", p === "done" || i < p));
+    $("#back").style.visibility = p === 1 ? "hidden" : "visible";
+    $("#next").textContent = p === 3 ? "Submit" : "Next";
+    $("#nav").hidden = p === "done";
+    $("#submit-err").hidden = true;
+    window.scrollTo({ top: 0 });
+  }
+
+  $("#back").addEventListener("click", () => show(page - 1));
+  $("#next").addEventListener("click", async () => {
+    if (!validate(page)) return;
+    if (page < 3) return show(page + 1);
+    await submit();
+  });
+  form.addEventListener("submit", e => e.preventDefault());
+
+  async function submit() {
+    const btn = $("#next"), err = $("#submit-err");
+    err.hidden = true;
+    const data = new URLSearchParams();
+    data.set("name", $("#name").value.trim());
+    data.set("email", $("#email").value.trim());
+    data.set("cohort", $("#cohort").value);
+    DESIGNS.forEach(d => data.set(d.id, form.querySelector(`input[name="${d.id}"]:checked`).value));
+    data.set("size", [...form.querySelectorAll('input[name="size"]:checked')].map(i => i.value).join(", "));
+    data.set("ideas", $("#ideas").value.trim());
+    data.set("website", $("#website").value);
+
+    if (!SHEET_URL) { console.log("Preview submission:", Object.fromEntries(data)); show("done"); return; }
+
+    btn.disabled = true; btn.textContent = "Sending…";
+    try {
+      await fetch(SHEET_URL, { method: "POST", mode: "no-cors", body: data });
+      show("done");
+    } catch (e) {
+      err.textContent = "Couldn't send your response. Check your connection and press Submit again.";
+      err.hidden = false;
+      btn.disabled = false; btn.textContent = "Submit";
+    }
+  }
+
+  show(1);
+</script>
+</body>
+</html>
