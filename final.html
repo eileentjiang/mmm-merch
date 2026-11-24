@@ -129,7 +129,46 @@
     font-size: 14px; background: #fff4d6; color: #5c3d00; border: 1px solid #f0c75e;
     border-radius: 8px; padding: 10px 12px;
   }
+  /* size guide */
+  .sg h2 { font-size: 20px; font-weight: 800; margin: 0 0 4px; }
+  .sg h3 { font-size: 19px; font-weight: 800; margin: 0 0 10px; }
+  .sg-garments { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sg-garments button {
+    font: 600 14px/1 var(--font-body); padding: 9px 12px; border-radius: 999px; cursor: pointer;
+    border: 1.5px solid var(--line); background: transparent; color: var(--ink);
+  }
+  .sg-garments button[aria-selected=true] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .sg-units { display: flex; gap: 28px; border-bottom: 1px solid var(--line); margin-top: -6px; }
+  .sg-units button {
+    font: 600 16px/1 var(--font-body); padding: 10px 0 12px; border: 0; background: transparent; cursor: pointer;
+    color: var(--mute); border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .sg-units button[aria-selected=true] { color: var(--ink); opacity: 1; border-bottom-color: var(--ink); }
+  .sg-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .sg-table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .sg-table th, .sg-table td { border: 1px solid var(--line); padding: 11px 8px; text-align: center; white-space: nowrap; }
+  .sg-table thead th { background: color-mix(in srgb, var(--mute) 14%, var(--card)); font-weight: 700; white-space: normal; line-height: 1.25; }
+  .sg-table tbody th { font-weight: 600; }
+  .sg-steps { list-style: none; margin: 0; padding: 0; counter-reset: s; display: flex; flex-direction: column; gap: 10px; }
+  .sg-steps li { counter-increment: s; }
+  .sg-steps b { display: flex; align-items: center; gap: 8px; }
+  .sg-steps b::before {
+    content: counter(s); width: 20px; height: 20px; border-radius: 50%; flex: none;
+    background: var(--ink); color: var(--card); font-size: 12px; display: grid; place-items: center;
+  }
+  .sg-steps span { display: block; color: var(--mute); font-size: 14px; margin-top: 2px; }
+  .sg-how { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 24px; align-items: center; }
+  .sg-fig { width: 100%; max-width: 280px; height: auto; }
+  .sg-outline * { fill: none; stroke: var(--mute); stroke-width: 1.5; stroke-linejoin: round; }
+  .sg-meas line { stroke: #e8913a; stroke-width: 1.5; }
+  .sg-dot circle { fill: var(--ink); }
+  .sg-dot text { fill: var(--card); font: 700 11px/1 var(--font-body); text-anchor: middle; }
+
   @media (max-width: 600px) {
+    .sg-how { grid-template-columns: 1fr; gap: 16px; }
+    .sg-fig { justify-self: center; order: -1; }
+    .sg-table { font-size: 13px; }
+    .sg-table th, .sg-table td { padding: 9px 3px; }
     .card { padding: 18px; }
     .toggle { padding: 14px 12px; }
     .lines { padding: 12px 12px 14px; }
@@ -186,6 +225,47 @@
         <p class="note">Tap the image to see it full size.</p>
       </div>
 
+      <div class="eyebrow">Size guide</div>
+      <div class="card sg" id="size-guide">
+        <div>
+          <h2>Size Guide</h2>
+          <p class="note">Sizes run XS to 3XL. All measurements are taken lying flat.</p>
+        </div>
+        <div class="sg-how">
+          <div>
+            <h3>How to Measure</h3>
+            <ol class="sg-steps" id="sg-steps"></ol>
+          </div>
+          <svg class="sg-fig" viewBox="0 0 260 225" role="img" aria-label="Sweatshirt diagram showing where each measurement is taken">
+            <g class="sg-outline">
+              <path d="M110 30 L80 40 L28 172 L50 182 L85 98 L85 195 L175 195 L175 98 L210 182 L232 172 L180 40 L150 30"/>
+              <path d="M110 30 Q130 46 150 30 Q130 20 110 30 Z"/>
+              <rect x="85" y="195" width="90" height="13" rx="2"/>
+              <path d="M28 172 L50 182 L45 194 L23 184 Z"/>
+              <path d="M232 172 L210 182 L215 194 L237 184 Z"/>
+            </g>
+            <g class="sg-meas">
+              <line x1="80" y1="44" x2="180" y2="44"/>
+              <line x1="85" y1="102" x2="175" y2="102"/>
+              <line x1="85" y1="202" x2="175" y2="202"/>
+              <line x1="184" y1="38" x2="236" y2="170"/>
+            </g>
+            <g class="sg-dot"><circle cx="100" cy="56" r="9"/><text x="100" y="60">1</text></g>
+            <g class="sg-dot"><circle cx="100" cy="116" r="9"/><text x="100" y="120">2</text></g>
+            <g class="sg-dot"><circle cx="190" cy="202" r="9"/><text x="190" y="206">3</text></g>
+            <g class="sg-dot"><circle cx="226" cy="108" r="9"/><text x="226" y="112">4</text></g>
+          </svg>
+        </div>
+        <div class="sg-garments" role="tablist" aria-label="Garment" id="sg-garments"></div>
+        <div class="sg-units" role="tablist" aria-label="Units" id="sg-units">
+          <button type="button" role="tab" data-unit="in" aria-selected="true">Inches</button>
+          <button type="button" role="tab" data-unit="cm" aria-selected="false">Centimeters</button>
+        </div>
+        <div class="sg-scroll"><table class="sg-table" id="sg-table"></table></div>
+
+
+      </div>
+
       <div class="eyebrow">Your order</div>
       <div class="card">
         <p class="note" style="color:var(--ink)">Check each design you want, then pick a size and quantity. Need more than one size? Tap <strong>+ Add another size</strong>.</p>
@@ -223,7 +303,7 @@
     { id: "D4", name: "Dark Navy Fuzzy Fleece", low: 70, high: 80, sized: true },
     { id: "D5", name: "Dark Purple Beanie",     low: 20, high: 20, sized: false },
   ];
-  const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+  const SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
   const MAX_QTY = 10;
   /* ======================== */
 
@@ -247,6 +327,42 @@
     document.addEventListener("keydown", onKey);
     document.body.appendChild(box);
   });
+
+  // size guide (from the manufacturer's size chart: inches tab + cm tab)
+  const SG_SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"]; // factory S–4XL, relabeled one size down
+  const SG = [
+    { id: "D2", name: "D2 Crewneck", lenLabel: "Length (center back)", sleeveNote: "from the shoulder seam",
+      in: [[27.2,28,28.7,29.5,30.3,31.1,31.9],[22,22.6,23.2,23.8,24.4,25,25.6],[45.7,47.2,48.8,50.4,52,53.5,55.1],[40.2,41.7,43.3,44.9,46.5,48,49.6],[22.5,23.2,23.8,24.4,25,25.6,26.2]],
+      cm: [[69,71,73,75,77,79,81],[56,57.5,59,60.5,62,63.5,65],[116,120,124,128,132,136,140],[102,106,110,114,118,122,126],[57.2,59,60.5,62,63.5,65,66.5]] },
+    { id: "D3", name: "D3 Quarterzip", lenLabel: "Length (front)", sleeveNote: "from the center back of the collar",
+      in: [[26.8,27.6,28.3,29.1,29.9,30.7,31.5],[22,22.8,23.6,24.4,25.2,26,26.8],[45.3,46.9,48.4,50,51.6,53.1,54.7],[37.8,39.4,40.9,42.5,44.1,45.7,46.5],[33.1,33.9,34.6,35.4,36.2,37,37.8]],
+      cm: [[68,70,72,74,76,78,80],[56,58,60,62,64,66,68],[115,119,123,127,131,135,139],[96,100,104,108,112,116,118],[84,86,88,90,92,94,96]] },
+    { id: "D4", name: "D4 Fleece", lenLabel: "Length (front)", sleeveNote: "from the shoulder seam",
+      in: [[26.4,27.2,28,28.7,29.5,30.3,31.1],[28.3,29.1,29.9,30.7,31.5,32.3,33.1],[51.2,53.1,55.1,57.1,59.1,61,63],[40.2,41.7,43.3,44.9,46.5,48,49.6],[20.5,20.9,21.3,21.7,22,22.4,22.8]],
+      cm: [[67,69,71,73,75,77,79],[72,74,76,78,80,82,84],[130,135,140,145,150,155,160],[102,106,110,114,118,122,126],[52,53,54,55,56,57,58]] },
+  ];
+  let sgG = 0, sgU = "in";
+  const tabs = (el, on) => el.querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-selected", on(b, i)));
+  function renderSG() {
+    const g = SG[sgG];
+    const heads = ["Shoulder", "Chest", "Hem", "Sleeve"];
+    $("#sg-table").innerHTML =
+      `<thead><tr><th scope="col">Size</th>${heads.map(h => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>` +
+      SG_SIZES.map((s, r) => `<tr><th scope="row">${s}</th>${g[sgU].slice(1).map((col, c) => `<td>${c === 1 || c === 2 ? Math.round(col[r] * 5) / 10 : col[r]}</td>`).join("")}</tr>`).join("") +
+      `</tbody>`;
+    $("#sg-steps").innerHTML = [
+      ["Shoulder width", "From where the shoulder seam meets the sleeve on one side to the other side."],
+      ["Chest", "Lay it flat and measure straight across, from armpit to armpit."],
+      ["Hem", "Lay it flat and measure straight across the bottom edge, side to side."],
+      ["Sleeve length", `Measured ${g.sleeveNote} to the end of the cuff.`],
+    ].map(([t, d]) => `<li><b>${t}</b><span>${d}</span></li>`).join("");
+    tabs($("#sg-garments"), (b, i) => i === sgG);
+    tabs($("#sg-units"), b => b.dataset.unit === sgU);
+  }
+  $("#sg-garments").innerHTML = SG.map((g, i) => `<button type="button" role="tab" data-g="${i}">${g.name}</button>`).join("");
+  $("#sg-garments").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { sgG = +b.dataset.g; renderSG(); } });
+  $("#sg-units").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { sgU = b.dataset.unit; renderSG(); } });
+  renderSG();
 
   // order state: { D2: [{size:"M", qty:1}, ...] }
   const order = {};
